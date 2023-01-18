@@ -24,15 +24,19 @@ About Half Second processing time for 5612 data on unoptimized buid (will be fas
 - open the application
 - you can change the pray range upto your configuration
 ![This is an image](/asset/input.png)
+</br></br>
 - press `process data` button to open `open file windows dialog` then select the input file
 ![This is an image](/asset/api.png)
+</br></br>
 - the file will be processed in second and you will got result like this
 ![This is an image](/asset/out.png)
+</br></br>
 - select the machine then press `get data` to get your sweet data
 
 ## Input - Output
 The input need to be same table as this (same as Fingerspot out on masjid moedhar arifin)
 ![This is an image](/asset/data_in.png)
+</br></br>
 The output will become like this
 ![This is an image](/asset/data_out.png)
 Note: Above image says invalid because the pin format is incorrect, from the original
