@@ -19,6 +19,7 @@ permissions:
   SecurityEvents: write
   Statuses: write
 
+
 jobs:
   publish-tauri:
     strategy:
