@@ -23,19 +23,6 @@
   let t_s = "02:00"
   let t_f ="03:19"
   
-
-  let get_path = async (csv:boolean) =>{
-    const extension = csv?"csv":"html"
-    const file = await open({filters:[{extensions:[extension],name:"data"}]})
-    if (file instanceof Array || file == null){
-      greetMsg = "No file selected"
-      return ""
-    }else{
-      loadingScreen = true
-      greetMsg = "loading ....."
-      return file
-   }
-  }
   async function file_parse(path:string,csv:boolean){
       const all:string = [d_s,d_f, a_s,a_f,m_s,m_f, i_s,i_f,s_s,s_f,t_s,t_f].join(",");
       const res = await invoke("greet",{path,all,csv}) as string
@@ -43,6 +30,19 @@
       greetMsg = ""
       loadingScreen = false
       main = false
+  }
+
+  let get_path = async (csv:boolean) =>{
+    const extension = csv?"csv":"html"
+    const file = await open({filters:[{extensions:[extension],name:"data"}]})
+    if (file instanceof Array || file == null){
+      greetMsg = "No file selected"
+      loadingScreen = false
+    }else{
+      loadingScreen = true
+      greetMsg = "loading ....."
+      await file_parse(file,csv)
+   }
   }
 </script>
 
@@ -115,19 +115,15 @@
       </div> 
     </div>
     <div class="button-holder">
-    <button on:click|preventDefault={async () => {
-      const path = await get_path(true)
-      if (path != ""){
-        await file_parse(path,true)
-      }
+    <button on:click|preventDefault={() => {
+      loadingScreen = true
+      get_path(true)
     }}>
       Proses CSV
     </button>
-    <button on:click|preventDefault={async () =>{
-      const path = await get_path(false)
-      if (path != ""){
-        await file_parse(path,false)
-      }
+    <button on:click|preventDefault={() => {
+      loadingScreen = true
+      get_path(false)
     }}>
       Proses HTML
     </button>
