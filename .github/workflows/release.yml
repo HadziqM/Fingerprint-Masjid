@@ -35,8 +35,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v0.0.0
-          releaseName: 'v0.0.0'
+          tagName: v0.1.0
+          releaseName: 'v0.1.0'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
