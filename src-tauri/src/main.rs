@@ -9,6 +9,7 @@ use std::cell::RefCell;
 
 pub mod csv_in;
 pub mod csv_out;
+pub mod html_in;
 
 #[derive(Debug,Deserialize,Clone,PartialEq)]
 pub struct Input{
@@ -107,7 +108,7 @@ fn wtf(){
     println!("invoked");
 }
 #[tauri::command]
-fn greet(path: String,all:String)-> String {
+fn greet(path: String,all:String,csv:bool)-> String {
     println!("invoked");
     let mut hate = all.split(",");
     let tl = TimeLimit { 
@@ -123,7 +124,10 @@ fn greet(path: String,all:String)-> String {
         subuh_f:hate.next().unwrap().to_string(),
         tahajud_s:hate.next().unwrap().to_string(),
         tahajud_f: hate.next().unwrap().to_string()};
-    let holder = csv_in::csv2database(&path, &tl);
+    let holder = match csv{
+        true => csv_in::csv2database(&path, &tl),
+        false => html_in::html2hold(&path, &tl)
+    };
     if holder.is_ok(){
         let res = holder.unwrap();
         unsafe{

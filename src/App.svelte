@@ -7,6 +7,7 @@
 
 
   let greetMsg = ""
+  let loadingScreen = false
   let main = true
 
   let d_s = "11:00"
@@ -21,30 +22,42 @@
   let s_f ="04:10" 
   let t_s = "02:00"
   let t_f ="03:19"
-   async function greet(){
-    const file = await open({filters:[{extensions:['csv'],name:"data"}]})
+  
+
+  let get_path = async (csv:boolean) =>{
+    const extension = csv?"csv":"html"
+    const file = await open({filters:[{extensions:[extension],name:"data"}]})
     if (file instanceof Array || file == null){
       greetMsg = "No file selected"
+      return ""
     }else{
-      greetMsg = "loading....."
-      const all:string = d_s + "," + d_f + "," + a_s + "," + a_f + "," + m_s + "," + m_f + "," + i_s + "," + i_f + "," +s_s + "," + s_f + "," +t_s + "," + t_f;
-
-      const res = await invoke("greet",{
-        path: file,
-        all: all}) as string
+      loadingScreen = true
+      greetMsg = "loading ....."
+      return file
+   }
+  }
+  async function file_parse(path:string,csv:boolean){
+      const all:string = [d_s,d_f, a_s,a_f,m_s,m_f, i_s,i_f,s_s,s_f,t_s,t_f].join(",");
+      const res = await invoke("greet",{path,all,csv}) as string
       output.set(JSON.parse(res) as Output);
       greetMsg = ""
+      loadingScreen = false
       main = false
-    }
   }
 </script>
 
 {#if !main}
   <Greet back={()=>main=true}/>
 {:else}
+  {#if loadingScreen}
+    <div class="full_sc">
+      <h1>loading.....</h1>
+    </div>
+  {:else}
 <div class="full_sc">
+    <h2>{greetMsg}</h2>
   <a href="https://www.convertcsv.com/html-table-to-csv.htm" target="_blank">Click This to convert Html to CSV</a>
-  <form class="form-s" on:submit|preventDefault={greet}>
+  <form class="form-s">
     <div class="bg-container">
       <div class="container">
         <p>Duhur</p>
@@ -101,14 +114,39 @@
         </div>
       </div> 
     </div>
-    <button type=submit>
-      Proses Data
+    <div class="button-holder">
+    <button on:click|preventDefault={async () => {
+      const path = await get_path(true)
+      if (path != ""){
+        await file_parse(path,true)
+      }
+    }}>
+      Proses CSV
     </button>
+    <button on:click|preventDefault={async () =>{
+      const path = await get_path(false)
+      if (path != ""){
+        await file_parse(path,false)
+      }
+    }}>
+      Proses HTML
+    </button>
+    </div>
   </form>
 </div>
+  {/if}
 {/if}
 
 <style>
+  .button-holder{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+  .button-holder button{
+    font-size: 1.5rem;
+  }
   .form-s{
     display: flex;
     flex-direction: column;
